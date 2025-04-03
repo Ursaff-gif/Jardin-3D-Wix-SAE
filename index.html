@@ -10,7 +10,7 @@
       position: relative;
       width: 80vw;
       height: 70vh;
-      background-image: url("https://i.imgur.com/xJgN0bp.jpg"); /* image d'un jardin */
+      background-image: url('images/background.jpg');
       background-size: cover;
       border: 2px solid #ccc;
       overflow: hidden;
@@ -60,16 +60,7 @@
   <script>
     const gallery = document.getElementById("gallery");
     const workspace = document.getElementById("workspace");
-    const plantImages = [
-      "https://i.imgur.com/2E5GPN1.png", "https://i.imgur.com/BhYIMeV.png", "https://i.imgur.com/Cpblhtz.png",
-      "https://i.imgur.com/vRg1aAo.png", "https://i.imgur.com/B14hSz2.png", "https://i.imgur.com/GcuTO0O.png",
-      "https://i.imgur.com/hml3qEN.png", "https://i.imgur.com/yjZVJpn.png", "https://i.imgur.com/GDObTgW.png",
-      "https://i.imgur.com/KCRxsvx.png", "https://i.imgur.com/ilKTuEM.png", "https://i.imgur.com/ibK2IjU.png",
-      "https://i.imgur.com/E8KhPH1.png", "https://i.imgur.com/2TYv7KO.png", "https://i.imgur.com/Cy9rgWR.png",
-      "https://i.imgur.com/ucjEJwT.png", "https://i.imgur.com/yBgNeWk.png", "https://i.imgur.com/FsfqIfg.png",
-      "https://i.imgur.com/XZyMDM2.png", "https://i.imgur.com/wP4Gd2O.png"
-    ];
-
+    const plantImages = ["images/plant1.png", "images/plant2.png", "images/plant3.png", "images/plant4.png", "images/plant5.png", "images/plant6.png", "images/plant7.png", "images/plant8.png", "images/plant9.png", "images/plant10.png", "images/plant11.png", "images/plant12.png", "images/plant13.png", "images/plant14.png", "images/plant15.png", "images/plant16.png", "images/plant17.png", "images/plant18.png", "images/plant19.png", "images/plant20.png"];
     let selected = null;
 
     plantImages.forEach((src) => {
@@ -86,34 +77,24 @@
       img.style.top = "50px";
       img.style.left = "50px";
       img.style.transform = "rotate(0deg) scale(1)";
-
-      img.onclick = () => {
-        selected = img;
-      };
-
+      img.onclick = () => { selected = img; };
       img.onmousedown = (e) => {
         let shiftX = e.clientX - img.getBoundingClientRect().left;
         let shiftY = e.clientY - img.getBoundingClientRect().top;
-
         function moveAt(pageX, pageY) {
           img.style.left = pageX - shiftX - workspace.offsetLeft + "px";
           img.style.top = pageY - shiftY - workspace.offsetTop + "px";
         }
-
         function onMouseMove(e) {
           moveAt(e.pageX, e.pageY);
         }
-
         document.addEventListener("mousemove", onMouseMove);
-
         img.onmouseup = () => {
           document.removeEventListener("mousemove", onMouseMove);
           img.onmouseup = null;
         };
       };
-
       img.ondragstart = () => false;
-
       workspace.appendChild(img);
       selected = img;
     }
