@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulateur 3D Jardin - Pavoine Paysage</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; background: #f4f4f4; margin: 0; }
+    h1 { margin-top: 20px; }
+    #workspace {
+      position: relative;
+      width: 80vw;
+      height: 70vh;
+      background-image: url("https://i.imgur.com/xJgN0bp.jpg"); /* image d'un jardin */
+      background-size: cover;
+      border: 2px solid #ccc;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .plant {
+      position: absolute;
+      cursor: move;
+      width: 100px;
+      user-select: none;
+    }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .controls img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      cursor: pointer;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      padding: 5px;
+    }
+    .btn-group button {
+      margin: 5px;
+      padding: 5px 10px;
+      background: #5abf66;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simulateur 3D - Mon Jardin</h1>
+  <div id="workspace"></div>
+
+  <div class="controls" id="gallery"></div>
+
+  <div class="btn-group">
+    <button onclick="rotateSelected(-15)">↺ Tourner gauche</button>
+    <button onclick="rotateSelected(15)">↻ Tourner droite</button>
+    <button onclick="resizeSelected(-10)">➖ Réduire</button>
+    <button onclick="resizeSelected(10)">➕ Agrandir</button>
+  </div>
+
+  <script>
+    const gallery = document.getElementById("gallery");
+    const workspace = document.getElementById("workspace");
+    const plantImages = [
+      "https://i.imgur.com/2E5GPN1.png", "https://i.imgur.com/BhYIMeV.png", "https://i.imgur.com/Cpblhtz.png",
+      "https://i.imgur.com/vRg1aAo.png", "https://i.imgur.com/B14hSz2.png", "https://i.imgur.com/GcuTO0O.png",
+      "https://i.imgur.com/hml3qEN.png", "https://i.imgur.com/yjZVJpn.png", "https://i.imgur.com/GDObTgW.png",
+      "https://i.imgur.com/KCRxsvx.png", "https://i.imgur.com/ilKTuEM.png", "https://i.imgur.com/ibK2IjU.png",
+      "https://i.imgur.com/E8KhPH1.png", "https://i.imgur.com/2TYv7KO.png", "https://i.imgur.com/Cy9rgWR.png",
+      "https://i.imgur.com/ucjEJwT.png", "https://i.imgur.com/yBgNeWk.png", "https://i.imgur.com/FsfqIfg.png",
+      "https://i.imgur.com/XZyMDM2.png", "https://i.imgur.com/wP4Gd2O.png"
+    ];
+
+    let selected = null;
+
+    plantImages.forEach((src) => {
+      const img = document.createElement("img");
+      img.src = src;
+      img.onclick = () => addPlant(src);
+      gallery.appendChild(img);
+    });
+
+    function addPlant(src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.classList.add("plant");
+      img.style.top = "50px";
+      img.style.left = "50px";
+      img.style.transform = "rotate(0deg) scale(1)";
+
+      img.onclick = () => {
+        selected = img;
+      };
+
+      img.onmousedown = (e) => {
+        let shiftX = e.clientX - img.getBoundingClientRect().left;
+        let shiftY = e.clientY - img.getBoundingClientRect().top;
+
+        function moveAt(pageX, pageY) {
+          img.style.left = pageX - shiftX - workspace.offsetLeft + "px";
+          img.style.top = pageY - shiftY - workspace.offsetTop + "px";
+        }
+
+        function onMouseMove(e) {
+          moveAt(e.pageX, e.pageY);
+        }
+
+        document.addEventListener("mousemove", onMouseMove);
+
+        img.onmouseup = () => {
+          document.removeEventListener("mousemove", onMouseMove);
+          img.onmouseup = null;
+        };
+      };
+
+      img.ondragstart = () => false;
+
+      workspace.appendChild(img);
+      selected = img;
+    }
+
+    function rotateSelected(deg) {
+      if (!selected) return;
+      const transform = selected.style.transform;
+      const match = transform.match(/rotate\(([-\d]+)deg\)/);
+      let current = match ? parseInt(match[1]) : 0;
+      const newDeg = current + deg;
+      selected.style.transform = transform.replace(/rotate\([^)]+\)/, `rotate(${newDeg}deg)`);
+    }
+
+    function resizeSelected(change) {
+      if (!selected) return;
+      const transform = selected.style.transform;
+      const match = transform.match(/scale\(([^)]+)\)/);
+      let current = match ? parseFloat(match[1]) : 1;
+      const newScale = Math.max(0.2, current + change / 100);
+      selected.style.transform = transform.replace(/scale\([^)]+\)/, `scale(${newScale})`);
+    }
+  </script>
+</body>
+</html>
